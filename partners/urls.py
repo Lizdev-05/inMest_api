@@ -20,5 +20,6 @@ urlpatterns = [
     path('all_queries/', all_queries),
 
     # path("queries/", QueryView.as_view()),
-path("queries/", QueryView.as_view(), name="query-view" ),
+path("queries/", QueryView.as_view(), name="query-view" ),\
+path('schedule/fetch/', fetch_class_schedule)
 ]

@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
-
-
-
-
-
-
-
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from partners.models import *
+from partners.serializers import *
 
 
 
@@ -119,6 +117,33 @@ class QueryView(View):
          return JsonResponse({"status": "Ok"})
 
 
+@api_view(["GET"])
+def fetch_class_schedule(request):
+#  Retrieve from DB all class schedule
+  queryset = ClassSchedule.objects.all()
+
+#  Return queryset result as response
+#    Transform/serialize the queryset result to json and send as response
+ 
+  serializer = ClassScheduleSerializer(queryset, many=True)
+# Respond to the request
+  return Response({"data": serializer.data}, status.HTTP_200_OK)
+
+
+
 
     
+@api_view(['POST'])
+def create_class_schedule(request):
+  title = request.data.get("title")
+  description = request.data.get("description")
+  start_date_and_time = request.data.get("start_date_and_time")
+  end_date_and_time = request.data.get("end_date_and_time")
+  cohort_id = request.data.get("cohort_id")
+  venue = request.data.get("venue")
+  repeat_frequency = request.data.get("   repeat_frequency")
+  is_repeated = request.data.get("is_repeated")
+  venue = request.data.get("venue")
 
+  if not title:
+      return Response({"message": "My friend, send me title!!!"})

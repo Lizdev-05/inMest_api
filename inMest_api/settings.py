@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'partners',
     'users',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'inMest_api.urls'
+AUTH_USER_MODEL = 'users.IMUser'
 
 TEMPLATES = [
     {
