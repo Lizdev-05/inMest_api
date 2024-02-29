@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import AbstractUser
+from rest_framework.authtoken.models import Token
 
 
 class IMUser(AbstractUser):
@@ -22,6 +23,12 @@ class IMUser(AbstractUser):
     def __str__(self):
         return f"{self.first_name} - {self.last_name} - {self.user_type}"
     
+
+    def generate_user_token(self):
+        token = Token.objects.create(user=self)
+        token.save()
+    
+    
 class Cohort(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
@@ -40,6 +47,8 @@ class CohortMember(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     author = models.ForeignKey(IMUser, on_delete=models.CASCADE, related_name='authored_cohort_members')
+
+   
 
 
 

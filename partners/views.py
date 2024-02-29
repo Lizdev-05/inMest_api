@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from partners.models import *
 from partners.serializers import *
+from users.models import *
 
 
 
@@ -144,6 +145,31 @@ def create_class_schedule(request):
   repeat_frequency = request.data.get("   repeat_frequency")
   is_repeated = request.data.get("is_repeated")
   venue = request.data.get("venue")
+  facilitator_id = request.data.get("facilitator_id")
+  course_id = request.data.get("course_id")
 
+
+# Performing Validatio 
   if not title:
-      return Response({"message": "My friend, send me title!!!"})
+        return Response({"message": "My friend, send me title!!!"})
+  
+  cohort = None
+  facilitator = None
+  course= None
+
+#   Validating the existence of records
+  
+  try:
+        cohort = Cohort.objects.get(id = cohort_id)
+  except Cohort.DoesNotExist:
+        return Response({"message": "Guy, this cohort does not exist"}, status.HTTP_400_BAD_REQUEST)
+  
+  try:
+      facilitator = IMUser.objects.get(id = facilitator_id)
+  except IMUser.DoesNotExist:
+     return Response({"message": "Guy, this cohort does not exist"}, status.HTTP_400_BAD_REQUEST)
+  
+  try:
+     course = Course.objects.get(id = course_id)
+  except Course.DoesNotExist:
+     return Response({"message": "Guy, this cohort does not exist"}, status.HTTP_400_BAD_REQUEST)
