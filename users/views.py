@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import api_view, permission_classes, action
-from serializers import *
+from users.serializers import *
 from rest_framework import status
 
 # Create your views here.
@@ -50,15 +50,15 @@ def signup(request):
         )
     new_user.set_password(password)
     new_user.save()
-    new_user.generate_user_token()
-    serializer = UserSerializer(new_user, many=False)
+    # new_user.generate_user_token()
+    serializer = AuthSerializer(new_user, many=False)
     return Response({"Message": "Account created successfully", "result": serializer.data})
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def login(request):
+def user_login(request):
     # Receive inputs/data from client and validate inputs
-    username = request.data.get()
-    password = request.data.get()
+    username = request.data.get("username")
+    password = request.data.get("password")
 
     if not username or not password:
         return Response({"Detail": "Kindly input your username and password"}, status.HTTP_400_BAD_REQUEST)
@@ -66,6 +66,17 @@ def login(request):
     # Check user existence
     try:
         user = IMUser.objects.get(username = username)
+    # USer authentication
+        auth_user = authenticate(username=username, password=password)
+        if auth_user:
+            # Login User
+            login(request, user)
+            serializer = AuthSerializer(user, many=False)
+            return Response({"Result": serializer.data })
+        
+        else:
+            return Response({"detail": "Invalid credentials"}, status.HTTP_400_BAD_REQUEST)
+
     except IMUser.DoesNotExist:
         return Response({"Detail": "Username does not exist"}, status.HTTP_400_BAD_REQUEST)
     

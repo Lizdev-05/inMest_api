@@ -2,7 +2,8 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 from rest_framework.authtoken.models import Token
-
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 class IMUser(AbstractUser):
     first_name = models.CharField(max_length=100)
@@ -23,9 +24,15 @@ class IMUser(AbstractUser):
     def __str__(self):
         return f"{self.first_name} - {self.last_name} - {self.user_type}"
     
+# @receiver(post_save, sender=IMUser)
+# def generate_user_token(self):
+#     token = Token.objects.create(user=self)
+#     token.save()
 
-    def generate_user_token(self):
-        token = Token.objects.create(user=self)
+@receiver(post_save, sender=IMUser)
+def generate_user_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        token = Token.objects.create(user=instance)
         token.save()
     
     
