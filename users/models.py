@@ -11,6 +11,7 @@ class IMUser(AbstractUser):
     middle_name = models.CharField(max_length=100, blank= True)
     is_active = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=100, blank= True)
+    unique_code = models.CharField(max_length=20, blank=True)
     user_type = models.CharField(max_length=100, choices=[
         ('EIT', 'EIT'),
         ('TEACHING_FELLOW', 'TEACHING_FELLOW'),
@@ -20,6 +21,10 @@ class IMUser(AbstractUser):
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+    is_blocked = models.BooleanField(default=False)
+    temporal_login_fail = models.IntegerField(default=0) 
+    permanent_login_fail = models.IntegerField(default=0)
+    
 
     def __str__(self):
         return f"{self.first_name} - {self.last_name} - {self.user_type}"
