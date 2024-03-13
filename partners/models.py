@@ -38,8 +38,15 @@ class ClassAttendance(models.Model):
     date_created= models.DateTimeField(auto_now=True)
 
 class Query(models.Model):
+
+    QUERY_TYPES = (
+        ("FACILITY", "Faciity"),
+        ("LOGISTICS", "Logistics"),
+        ("KITCHEN", "Kitchen"),
+    )
     title = models.CharField(max_length=100)
     description = models.TextField(default='N/A', blank=True, null=True)
+    query_type = models.CharField(max_length=30, choices=QUERY_TYPES, default="FACILITY", blank="True", null=True )
     submitted_by = models.ForeignKey('users.IMUser', on_delete=models.CASCADE, related_name='submitted_queries')
     assigned_to = models.ForeignKey('users.IMUser', on_delete=models.CASCADE, related_name='assigned_queries')
     resolution_status = models.CharField(max_length=100, choices=[
@@ -48,6 +55,8 @@ class Query(models.Model):
         ('DECLINED', 'DECLINED'),
         ('RESOLVED', 'RESOLVED')
     ])
+
+
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     date_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     author = models.ForeignKey('users.IMUser', on_delete=models.CASCADE, related_name='authored_queries')

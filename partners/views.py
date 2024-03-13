@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from partners.models import *
 from partners.serializers import *
 from users.models import *
+from rest_framework import viewsets
 
 
 
@@ -173,3 +174,23 @@ def create_class_schedule(request):
      course = Course.objects.get(id = course_id)
   except Course.DoesNotExist:
      return Response({"message": "Guy, this cohort does not exist"}, status.HTTP_400_BAD_REQUEST)
+  
+
+  @action(detail=False, methods=["post"])
+  def raise_query(self, request):
+        title = request.data.get("title")
+        description = request.data.get("description", None)
+        query_type = request.data.get("query_type", None)
+        assignee = None
+        # if query_type == 'FACILITY':
+        #     assignee = IMUser.objects.get(email="lucky@")
+        query = Query.objects.create(
+            title=title,
+            description=description,
+            query_type=query_type,
+            submitted_by=request.user,
+            author=request.user
+        )
+        query.save()
+        #send email to the assignee
+        return Response({"message": "Query successfully submitted"})
