@@ -166,3 +166,42 @@ class ChangePasswordAPIView(APIView):
         user.save()
         return Response({"detail": "Password changed successfully"}, status=status.HTTP_200_OK)
 
+
+class QueryListCreateView(generics.ListCreateAPIView):
+    queryset = Query.objects.all()
+    serializer_class = QuerySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override to filter queries by the logged-in user.
+        """
+        return self.queryset.filter(user=self.request.user)
+
+class QueryDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Query.objects.all()
+    serializer_class = QuerySerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+class ClassScheduleListCreateView(generics.ListCreateAPIView):
+    queryset = ClassSchedule.objects.all()
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class ClassScheduleDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ClassSchedule.objects.all()
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+class CheckInView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        # Implement logic to check the user into their class
+        # This can involve checking for any overlapping schedules, etc.
+        # ...
+
+        return Response(status=status.HTTP_200_OK)

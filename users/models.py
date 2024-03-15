@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from rest_framework.authtoken.models import Token
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.contrib.auth.models import Permission
+
 
 class IMUser(AbstractUser):
     first_name = models.CharField(max_length=100)
@@ -61,8 +63,26 @@ class CohortMember(models.Model):
     author = models.ForeignKey(IMUser, on_delete=models.CASCADE, related_name='authored_cohort_members')
 
    
+class Query(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    status = models.CharField(max_length=20, choices=(('pending', 'Pending'), ('resolved', 'Resolved')))
 
+class ClassSchedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
+class IsOwnerOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Allow read-only access to any user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Allow write access only to the owner of the object
+        return obj.user == request.user
 
 # Create 2022, 2023, 2024 cohorts
 

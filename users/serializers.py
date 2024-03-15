@@ -29,6 +29,16 @@ class CohortMemberSerializer(serializers.Serializer):
     cohort = CohortSerializer(many = False)
     member = UserSerializer(many = False)
 
+class QuerySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Query
+        fields = '_all_'
+
+class ClassScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassSchedule
+        fields = '_all_'
+
 
    
 
